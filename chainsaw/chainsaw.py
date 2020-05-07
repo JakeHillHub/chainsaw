@@ -9,7 +9,7 @@ import argparse
 import subprocess
 
 
-__VERSION__ = '0.0.8'
+__VERSION__ = '0.0.9'
 
 
 def cmd(string, cwd=os.getcwd(), verbose=True, shell=False):
@@ -171,7 +171,7 @@ def remove(args):
     subtrees = load_json()
     fsubtrees = filter_subtrees(all_prefixes(subtrees) if args.all else args.prefixes, subtrees)
 
-    for subt in subtrees:
+    for subt in fsubtrees:
         cmd('git rm -rf {}'.format(subt['prefix']))
 
     add_subtree_to_json(filter_subtrees(all_prefixes(fsubtrees), subtrees, invert=True))

@@ -1,0 +1,7 @@
+[
+    {
+        "branch": "master",
+        "prefix": "tree_branch",
+        "remote": "ssh://git@10.0.1.5:7999/jake/tree-branch.git"
+    }
+]
