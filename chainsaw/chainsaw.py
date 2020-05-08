@@ -92,10 +92,6 @@ def ls(args):
             print(line.split(' ')[-1])
 
 
-def unknown_action(args):
-    print('Invalid command')
-
-
 ACTIONS = {
     'pull': pull,
     'add': add,
@@ -103,16 +99,16 @@ ACTIONS = {
     'revert': revert,
     'merge': merge,
     'ls': ls,
-    'version': lambda _: print(f'git-chainsaw {__VERSION__}')
+    'version': lambda _: print(f'git-chainsaw version {__VERSION__}')
 }
 
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('action', help='Subtree Action: {}'.format(' '.join(ACTIONS.keys())))
+    parser.add_argument('action', nargs='?', help='Subtree Action: {}'.format(' '.join(ACTIONS.keys())))
     known, action_args = parser.parse_known_args()
 
-    action = ACTIONS.get(known.action, unknown_action)
+    action = ACTIONS.get(known.action, ACTIONS['version'])
 
     action(action_args)
 
