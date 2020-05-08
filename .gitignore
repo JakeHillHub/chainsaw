@@ -1,1 +1,4 @@
 __pycache__
+build
+git_chainsaw.egg-info
+dist
