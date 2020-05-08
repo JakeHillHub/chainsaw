@@ -50,11 +50,15 @@ def add(args):
 
     if args.all:
         for subt in load_json():
-            command = filter_none(['add', '-P', subt['prefix'], subt['remote'], subt['branch'], '--squash' if args.squash else None])
-            cmd(['git', 'subtree'] + command)
+            command = 'git subtree add -P {} {} {}'.format(subt['prefix'], subt['remote'], subt['branch'])
+            if args.squash:
+                command += ' --squash'
+            cmd(command)
     elif args.prefix and args.remote and args.ref:
-        command = filter_none(['add', '-P', args.prefix, args.remote, args.ref, '--squash' if args.squash else None])
-        cmd(['git', 'subtree'] + command)
+        command = 'git subtree add -P {} {} {}'.format(args.prefix, args.remote, args.ref)
+        if args.squash:
+            command += ' --squash'
+        cmd(command)
     else:
         print(parser.parse_args(['--help']))
 
