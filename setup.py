@@ -6,7 +6,7 @@ README = (HERE / "README.md").read_text()
 
 setup(
     name='git-chainsaw',
-    version='0.0.1',
+    version='0.0.2',
     description='A lightweight wrapper around git subtrees that lets you work with many subtrees at once',
     long_description=README,
     long_description_content_type="text/markdown",
