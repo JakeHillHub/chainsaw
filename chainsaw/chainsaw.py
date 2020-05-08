@@ -1,30 +1,20 @@
 import os
+import re
 import json
 import argparse
 import subprocess
+from io import BytesIO
 
 
-def wait_subprocess(p):
-    (output, stderr) = p.communicate()
-    p.wait()
-    if output:
-        print(output)
-    if stderr:
-        print(stderr)
-    return output
+__VERSION__ = '0.0.3'
 
 
-def cmd(*args, cwd=os.getcwd()):
-    return wait_subprocess(subprocess.Popen(args, cwd=cwd))
-
-
-def git(*args, cwd=os.getcwd()):
-    print(args)
-    return cmd(*('git',) + args, cwd=cwd)
-
-
-def subtree(*args, cwd=os.getcwd()):
-    return git(*('subtree',) + args, cwd=cwd)
+def cmd(string, cwd=os.getcwd(), verbose=True):
+    process = subprocess.Popen(string.split(' '), cwd=cwd, stdout=subprocess.PIPE)
+    to_string = process.communicate()[0].decode('utf-8')
+    if verbose:
+        print(to_string)
+    return to_string
 
 
 def filter_none(args):
@@ -61,10 +51,10 @@ def add(args):
     if args.all:
         for subt in load_json():
             command = filter_none(['add', '-P', subt['prefix'], subt['remote'], subt['branch'], '--squash' if args.squash else None])
-            subtree(*command)
+            cmd(['git', 'subtree'] + command)
     elif args.prefix and args.remote and args.ref:
         command = filter_none(['add', '-P', args.prefix, args.remote, args.ref, '--squash' if args.squash else None])
-        subtree(*command)
+        cmd(['git', 'subtree'] + command)
     else:
         print(parser.parse_args(['--help']))
 
@@ -81,6 +71,14 @@ def merge(args):
     pass
 
 
+def ls(args):
+    """List existing submodules using git log"""
+
+    for line in cmd('git log', verbose=False).split('\n'):
+        if re.search('git-subtree-dir', line):
+            print(line.split(' ')[-1])
+
+
 def unknown_action(args):
     print('Invalid command')
 
@@ -90,7 +88,9 @@ ACTIONS = {
     'add': add,
     'push': push,
     'revert': revert,
-    'merge': merge
+    'merge': merge,
+    'ls': ls,
+    'version': lambda _: print(f'git-chainsaw {__VERSION__}')
 }
 
 
