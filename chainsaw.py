@@ -94,7 +94,7 @@ ACTIONS = {
 }
 
 
-if __name__ == '__main__':
+def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('action', help='Subtree Action: {}'.format(' '.join(ACTIONS.keys())))
     known, action_args = parser.parse_known_args()
@@ -102,3 +102,7 @@ if __name__ == '__main__':
     action = ACTIONS.get(known.action, unknown_action)
 
     action(action_args)
+
+
+if __name__ == '__main__':
+    main()
