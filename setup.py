@@ -20,11 +20,11 @@ setup(
     ],
 
     keywords='subtree',
-    install_requires=[
-    ],
+    packages=['chainsaw'],
+    install_requires=[],
     entry_points={
         "console_scripts": [
-            "chainsaw=chainsaw:main",
+            "chainsaw=chainsaw.chainsaw:main",
         ]
     },
 )
