@@ -34,13 +34,14 @@ def filter_none(args):
 
 def load_json():
     """Attempts to load a file in the current directory called chainsaw.json"""
-    return json.load('chainsaw.json')
+    with open('chainsaw.json', 'r') as file:
+        return json.load(file)
 
 
 def add_subtree_to_json(subtree):
     """Attempts to add a given subtrees information to the chainsaw.json file"""
     chainsaw_json = load_json()
-    chainsaw_json[subtree['prefix']] = subtree
+    chainsaw_json.append(subtree)
     json.dump('chainsaw.json', chainsaw_json)
 
 
@@ -58,10 +59,10 @@ def add(args):
     args = parser.parse_args(args)
 
     if args.all:
-        print('ALL')
+        for subt in load_json():
+            print(subt)
     elif args.prefix and args.remote and args.ref:
         command = filter_none(['add', '-P', args.prefix, args.remote, args.ref, '--squash' if args.squash else None])
-        print(command)
         subtree(*command)
     else:
         print(parser.parse_args(['--help']))
