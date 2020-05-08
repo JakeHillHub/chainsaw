@@ -5,7 +5,7 @@ HERE = pathlib.Path(__file__).parent
 README = (HERE / "README.md").read_text()
 
 setup(
-    name='chainsaw',
+    name='git-chainsaw',
     version='0.0.1',
     description='A lightweight wrapper around git subtrees that lets you work with many subtrees at once',
     long_description=README,
