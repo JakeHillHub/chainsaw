@@ -27,5 +27,5 @@ Example chainsaw.json
 
 Add all subtrees: 
 ```bash
-chainsaw add --all
+chainsaw add --all --squash
 ```
