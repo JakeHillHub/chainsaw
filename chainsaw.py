@@ -60,7 +60,8 @@ def add(args):
 
     if args.all:
         for subt in load_json():
-            print(subt)
+            command = filter_none(['add', '-P', subt['prefix'], subt['remote'], subt['branch'], '--squash' if args.squash else None])
+            subtree(*command)
     elif args.prefix and args.remote and args.ref:
         command = filter_none(['add', '-P', args.prefix, args.remote, args.ref, '--squash' if args.squash else None])
         subtree(*command)
