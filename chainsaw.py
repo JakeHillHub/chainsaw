@@ -50,8 +50,8 @@ def pull(args):
 
 def add(args):
     parser = argparse.ArgumentParser()
-    parser.add_argument('--all', dest='all', default=None, help='Add all subtrees defined in chainsaw.json')
-    parser.add_argument('--squash', dest='squash', default=None, help='Squash subtree history into one commit')
+    parser.add_argument('--all', dest='all', action='store_true', help='Add all subtrees defined in chainsaw.json')
+    parser.add_argument('--squash', dest='squash', action='store_true', help='Squash subtree history into one commit')
     parser.add_argument('prefix', nargs='?', default=None, help='Specify subtree prefix (path from top level)')
     parser.add_argument('remote', nargs='?', default=None, help='Remote url of subtree')
     parser.add_argument('ref', nargs='?', default=None, help='Ref of subtree (ie. master)')
@@ -60,7 +60,7 @@ def add(args):
     if args.all:
         print('ALL')
     elif args.prefix and args.remote and args.ref:
-        command = filter_none(['add', '-P', args.prefix, args.remote, args.ref, args.squash])
+        command = filter_none(['add', '-P', args.prefix, args.remote, args.ref, '--squash' if args.squash else None])
         print(command)
         subtree(*command)
     else:
