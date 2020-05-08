@@ -30,6 +30,10 @@ def load_json():
 
 def add_subtree_to_json(subtree):
     """Attempts to add a given subtrees information to the chainsaw.json file"""
+    if not os.path.isfile('chainsaw.json'):
+        with open('chainsaw.json', 'w'):
+            pass
+
     chainsaw_json = load_json()
     chainsaw_json.append(subtree)
     json.dump('chainsaw.json', chainsaw_json)
@@ -45,7 +49,7 @@ def add(args):
     parser.add_argument('--squash', dest='squash', action='store_true', help='Squash subtree history into one commit')
     parser.add_argument('prefix', nargs='?', default=None, help='Specify subtree prefix (path from top level)')
     parser.add_argument('remote', nargs='?', default=None, help='Remote url of subtree')
-    parser.add_argument('ref', nargs='?', default=None, help='Ref of subtree (ie. master)')
+    parser.add_argument('branch', nargs='?', default=None, help='Branch of subtree (ie. master)')
     args = parser.parse_args(args)
 
     if args.all:
@@ -54,11 +58,16 @@ def add(args):
             if args.squash:
                 command += ' --squash'
             cmd(command)
-    elif args.prefix and args.remote and args.ref:
-        command = 'git subtree add -P {} {} {}'.format(args.prefix, args.remote, args.ref)
+    elif args.prefix and args.remote and args.branch:
+        command = 'git subtree add -P {} {} {}'.format(args.prefix, args.remote, args.branch)
         if args.squash:
             command += ' --squash'
         cmd(command)
+        add_subtree_to_json({
+            'prefix': args.prefix,
+            'remote': args.remote,
+            'branch': args.branch
+        })
     else:
         print(parser.parse_args(['--help']))
 

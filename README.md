@@ -29,3 +29,8 @@ Add all subtrees:
 ```bash
 chainsaw add --all --squash
 ```
+
+List subtrees:
+```bash
+chainsaw ls
+```
