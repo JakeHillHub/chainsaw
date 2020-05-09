@@ -31,14 +31,13 @@ def load_json():
 def add_subtree_to_json(subtree):
     """Attempts to add a given subtrees information to the chainsaw.json file"""
     if not os.path.isfile('chainsaw.json'):
-        with open('chainsaw.json', 'w'):
-            pass
+        with open('chainsaw.json', 'w') as file:
+            file.write(json.dumps([]))
 
     chainsaw_json = load_json()
     chainsaw_json.append(subtree)
     with open('chainsaw.json', 'w') as file:
         file.write(json.dumps(chainsaw_json))
-    # json.dump('chainsaw.json', chainsaw_json)
 
 
 def pull(args):
