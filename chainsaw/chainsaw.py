@@ -25,7 +25,8 @@ def filter_none(args):
 def load_json():
     """Attempts to load a file in the current directory called chainsaw.json"""
     with open('chainsaw.json', 'r') as file:
-        return json.load(file)
+        loaded_json = json.load(file)
+        return loaded_json if loaded_json else []  # Return empty list if chainsaw.json is empty
 
 
 def add_subtree_to_json(subtree):
