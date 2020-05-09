@@ -77,7 +77,8 @@ def push(args):
     pass
 
 
-def revert(args):
+def reset(args):
+    """Reset a specific subtree to version"""
     pass
 
 
@@ -93,6 +94,12 @@ def ls(args):
             print(line.split(' ')[-1])
 
 
+def graph(args):
+    """Display git history in graph form (not really specific to subtree but whatever)"""
+    cmd('git -c color.ui=always log --graph --abbrev-commit --decorate --oneline')
+
+
+
 ACTIONS = {
     'pull': pull,
     'add': add,
@@ -100,6 +107,7 @@ ACTIONS = {
     'reset': reset,
     'merge': merge,
     'ls': ls,
+    'graph': graph,
     'version': lambda _: print(f'git-chainsaw version {__VERSION__}')
 }
 
