@@ -36,7 +36,9 @@ def add_subtree_to_json(subtree):
 
     chainsaw_json = load_json()
     chainsaw_json.append(subtree)
-    json.dump('chainsaw.json', chainsaw_json)
+    with open('chainsaw.json', 'w') as file:
+        file.write(json.dumps(chainsaw_json))
+    # json.dump('chainsaw.json', chainsaw_json)
 
 
 def pull(args):
