@@ -32,12 +32,12 @@ def add_subtree_to_json(subtree):
     """Attempts to add a given subtrees information to the chainsaw.json file"""
     if not os.path.isfile('chainsaw.json'):
         with open('chainsaw.json', 'w') as file:
-            file.write(json.dumps([]))
+            file.write(json.dumps([], sort_keys=True, indent=4, separators=(',', ': ')))
 
     chainsaw_json = load_json()
     chainsaw_json.append(subtree)
     with open('chainsaw.json', 'w') as file:
-        file.write(json.dumps(chainsaw_json))
+        file.write(json.dumps(chainsaw_json, sort_keys=True, indent=4, separators=(',', ': ')))
 
 
 def pull(args):
