@@ -49,10 +49,6 @@ def add_subtree_to_json(subtree):
         file.write(json.dumps(chainsaw_json, sort_keys=True, indent=4, separators=(',', ': ')))
 
 
-def pull(args):
-    pass
-
-
 def add(args):
     parser = argparse.ArgumentParser()
     parser.add_argument('--all', dest='all', action='store_true', help='Add all subtrees defined in chainsaw.json')
@@ -82,30 +78,17 @@ def add(args):
         print(parser.parse_args(['--help']))
 
 
-def _update_subtree(subt, squash):
-    fetch = 'git fetch {}'.format(subt['remote'])
-    commit = 'git commit -m "Updated {} subtree from {}'.format(subt['prefix'], subt['branch'])
-    merge = 'git merge -s subtree {}'.format(subt['branch'])
-    if squash:
-        merge += ' --squash'
-
-    cmd(fetch)
-    cmd(merge)
-    cmd(commit)
-
-
-def update(args):
+def pull(args):
     parser = argparse.ArgumentParser()
     parser.add_argument('--all', dest='all', action='store_true', help='Update all subtrees')
-    parser.add_argument('--squash', dest='squash', action='store_true', help='Squash updates')
     parser.add_argument('prefixes', nargs='*', default=[], help='Subtree prefixes/paths')
     args = parser.parse_args(args)
 
     subtrees = load_json()
-    subtrees = filter_subtrees(subtrees, all_prefixes(subtrees) if args.all else args.prefixes)
+    subtrees = filter_subtrees(all_prefixes(subtrees) if args.all else args.prefixes, subtrees)
 
     for subt in subtrees:
-        _update_subtree(subt, args.squash)
+        cmd('git subtree pull -P {} {} {}'.format(subt['prefix'], subt['remote'], subt['branch']))
 
 
 def push(args):
