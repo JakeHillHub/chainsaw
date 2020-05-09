@@ -21,6 +21,15 @@ def filter_none(args):
     return list(filter(lambda x: x != None, args))
 
 
+def filter_subtrees(prefixes, subtrees):
+    """Takes the json list of subtrees and returns only the ones specified (by prefix)"""
+    return list(filter(lambda subt: subt['prefix'] in prefixes, subtrees))
+
+
+def all_prefixes(subtrees):
+    return [subt['prefix'] for subt in subtrees]
+
+
 def load_json():
     """Attempts to load a file in the current directory called chainsaw.json"""
     with open('chainsaw.json', 'r') as file:
@@ -71,6 +80,32 @@ def add(args):
         })
     else:
         print(parser.parse_args(['--help']))
+
+
+def _update_subtree(subt, squash):
+    fetch = 'git fetch {}'.format(subt['remote'])
+    commit = 'git commit -m "Updated {} subtree from {}'.format(subt['prefix'], subt['branch'])
+    merge = 'git merge -s subtree {}'.format(subt['branch'])
+    if squash:
+        merge += ' --squash'
+
+    cmd(fetch)
+    cmd(merge)
+    cmd(commit)
+
+
+def update(args):
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--all', dest='all', action='store_true', help='Update all subtrees')
+    parser.add_argument('--squash', dest='squash', action='store_true', help='Squash updates')
+    parser.add_argument('prefixes', nargs='*', default=[], help='Subtree prefixes/paths')
+    args = parser.parse_args(args)
+
+    subtrees = load_json()
+    subtrees = filter_subtrees(subtrees, all_prefixes(subtrees) if args.all else args.prefixes)
+
+    for subt in subtrees:
+        _update_subtree(subt, args.squash)
 
 
 def push(args):
