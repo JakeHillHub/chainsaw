@@ -3,7 +3,6 @@ import re
 import json
 import argparse
 import subprocess
-from io import BytesIO
 
 
 __VERSION__ = '0.0.3'
@@ -98,7 +97,7 @@ ACTIONS = {
     'pull': pull,
     'add': add,
     'push': push,
-    'revert': revert,
+    'reset': reset,
     'merge': merge,
     'ls': ls,
     'version': lambda _: print(f'git-chainsaw version {__VERSION__}')
