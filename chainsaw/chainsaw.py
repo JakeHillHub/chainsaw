@@ -139,8 +139,12 @@ def reset(args):
     args = parser.parse_args(args)
 
     subtrees = load_json()
-    subtree = filter_subtrees([args.prefix], subtrees)[0]
-    print(subtree)
+    subt = filter_subtrees([args.prefix], subtrees)[0]
+
+    command = 'git subtree merge -P {} {}'.format(subt['prefix'], args.commit)
+    if args.squash:
+        command += ' --squash'
+    cmd(command)
 
 
 def merge(args):
