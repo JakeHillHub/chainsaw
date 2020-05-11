@@ -1,3 +1,5 @@
+"""chainsaw main"""
+
 import os
 import re
 import json
@@ -9,6 +11,8 @@ __VERSION__ = '0.0.4'
 
 
 def cmd(string, cwd=os.getcwd(), verbose=True):
+    """Wraps Popen"""
+
     process = subprocess.Popen(string.split(' '), cwd=cwd, stdout=subprocess.PIPE)
     to_string = process.communicate()[0].decode('utf-8')
     if verbose:
@@ -18,20 +22,25 @@ def cmd(string, cwd=os.getcwd(), verbose=True):
 
 def filter_none(args):
     """Takes a list of args and removes None values"""
+
     return list(filter(lambda x: x != None, args))
 
 
 def filter_subtrees(prefixes, subtrees):
     """Takes the json list of subtrees and returns only the ones specified (by prefix)"""
+
     return list(filter(lambda subt: subt['prefix'] in prefixes, subtrees))
 
 
 def all_prefixes(subtrees):
+    """Get all prefixes as a list from subtrees"""
+
     return [subt['prefix'] for subt in subtrees]
 
 
 def load_json():
     """Attempts to load a file in the current directory called chainsaw.json"""
+
     with open('chainsaw.json', 'r') as file:
         loaded_json = json.load(file)
         return loaded_json if loaded_json else []  # Return empty list if chainsaw.json is empty
@@ -39,6 +48,7 @@ def load_json():
 
 def add_subtree_to_json(subtree):
     """Attempts to add a given subtrees information to the chainsaw.json file"""
+
     if not os.path.isfile('chainsaw.json'):
         with open('chainsaw.json', 'w') as file:
             file.write(json.dumps([], sort_keys=True, indent=4, separators=(',', ': ')))
@@ -50,6 +60,8 @@ def add_subtree_to_json(subtree):
 
 
 def add(args):
+    """Add subtree and update chainsaw.json"""
+
     parser = argparse.ArgumentParser()
     parser.add_argument('--all', dest='all', action='store_true', help='Add all subtrees defined in chainsaw.json')
     parser.add_argument('--squash', dest='squash', action='store_true', help='Squash subtree history into one commit')
@@ -79,8 +91,11 @@ def add(args):
 
 
 def pull(args):
+    """Pull and merge using subtree strategy from subtree remote"""
+
     parser = argparse.ArgumentParser()
     parser.add_argument('--all', dest='all', action='store_true', help='Update all subtrees')
+    parser.add_argument('--squash', dest='squash', action='store_true', help='Squash subtree history into one commit')
     parser.add_argument('prefixes', nargs='*', default=[], help='Subtree prefixes/paths')
     args = parser.parse_args(args)
 
@@ -88,10 +103,15 @@ def pull(args):
     subtrees = filter_subtrees(all_prefixes(subtrees) if args.all else args.prefixes, subtrees)
 
     for subt in subtrees:
-        cmd('git subtree pull -P {} {} {}'.format(subt['prefix'], subt['remote'], subt['branch']))
+        command = 'git subtree pull -P {} {} {}'.format(subt['prefix'], subt['remote'], subt['branch'])
+        if args.squash:
+            command += ' --squash'
+        cmd(command)
 
 
 def push(args):
+    """Push changes to subtree remote"""
+
     parser = argparse.ArgumentParser()
     parser.add_argument('--all', dest='all', action='store_true', help='Push all changes in subtrees')
     parser.add_argument('prefixes', nargs='*', default=[], help='Subtree prefixes/paths')
@@ -123,6 +143,7 @@ def ls(args):
 
 def graph(args):
     """Display git history in graph form (not really specific to subtree but whatever)"""
+
     cmd('git -c color.ui=always log --graph --abbrev-commit --decorate --oneline')
 
 
