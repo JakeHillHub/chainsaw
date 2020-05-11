@@ -130,8 +130,17 @@ def push(args):
 
 
 def reset(args):
-    """Reset a specific subtree to version"""
-    pass
+    """Reset a specific subtree to specific commit"""
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--squash', action='store_true', help='Squash subtree history into one commit')
+    parser.add_argument('prefix', help='Subtree prefix/path')
+    parser.add_argument('commit', help='Commit hash to reset to')
+    args = parser.parse_args(args)
+
+    subtrees = load_json()
+    subtree = filter_subtrees([args.prefix], subtrees)[0]
+    print(subtree)
 
 
 def merge(args):
