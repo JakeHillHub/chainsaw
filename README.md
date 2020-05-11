@@ -37,7 +37,20 @@ chainsaw add --all [--squash]
 chainsaw add bingo https://github.com/nasa/bingo.git master [--squash]
 ```
 
+Updating subtrees:
+```bash
+# Pull specific subtrees only
+chainsaw pull bingo trick [etc.]
+
+# Pull changes from all subtrees
+chainsaw pull --all
+```
+
 List subtrees:
 ```bash
+# Print the prefix of each subtree found by git log
 chainsaw ls
+
+# Graph subtree history
+chainsaw graph
 ```
