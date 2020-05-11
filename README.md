@@ -40,10 +40,10 @@ chainsaw add bingo https://github.com/nasa/bingo.git master [--squash]
 Updating subtrees:
 ```bash
 # Pull specific subtrees only
-chainsaw pull bingo trick [etc.]
+chainsaw pull bingo trick [etc.] [--squash]
 
 # Pull changes from all subtrees
-chainsaw pull --all
+chainsaw pull --all [--squash]
 ```
 
 Updating subtree remotes:
