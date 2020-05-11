@@ -46,6 +46,15 @@ chainsaw pull bingo trick [etc.]
 chainsaw pull --all
 ```
 
+Updating subtree remotes:
+```bash
+# Push changes for specific subtrees only
+chainsaw push bingo trick [etc.]
+
+# Push changes for all subtrees
+chainsaw push --all
+```
+
 List subtrees:
 ```bash
 # Print the prefix of each subtree found by git log
