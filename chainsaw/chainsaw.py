@@ -2,6 +2,7 @@
 
 import os
 import re
+import sys
 import json
 import argparse
 import subprocess
@@ -40,6 +41,10 @@ def all_prefixes(subtrees):
 
 def load_json():
     """Attempts to load a file in the current directory called chainsaw.json"""
+
+    if not os.path.isfile('chainsaw.json'):
+        print('no chainsaw.json file found, add a subtree with "chainsaw add" or create a chainsaw.json definition from scratch')
+        sys.exit(0)
 
     with open('chainsaw.json', 'r') as file:
         loaded_json = json.load(file)
