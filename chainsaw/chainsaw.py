@@ -8,7 +8,7 @@ import argparse
 import subprocess
 
 
-__VERSION__ = '0.0.4'
+__VERSION__ = '0.0.5'
 
 
 def cmd(string, cwd=os.getcwd(), verbose=True):
