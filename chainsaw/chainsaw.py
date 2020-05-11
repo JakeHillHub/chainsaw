@@ -5,7 +5,7 @@ import argparse
 import subprocess
 
 
-__VERSION__ = '0.0.3'
+__VERSION__ = '0.0.4'
 
 
 def cmd(string, cwd=os.getcwd(), verbose=True):
@@ -92,7 +92,16 @@ def pull(args):
 
 
 def push(args):
-    pass
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--all', dest='all', action='store_true', help='Push all changes in subtrees')
+    parser.add_argument('prefixes', nargs='*', default=[], help='Subtree prefixes/paths')
+    args = parser.parse_args(args)
+
+    subtrees = load_json()
+    subtrees = filter_subtrees(all_prefixes(subtrees) if args.all else args.prefixes, subtrees)
+
+    for subt in subtrees:
+        cmd('git subtree push -P {} {} {}'.format(subt['prefix'], subt['remote'], subt['branch']))
 
 
 def reset(args):
