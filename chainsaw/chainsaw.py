@@ -126,6 +126,16 @@ def graph(args):
     cmd('git -c color.ui=always log --graph --abbrev-commit --decorate --oneline')
 
 
+def cs_help(args):
+    parser = argparse.ArgumentParser()
+    parser.add_argument('action', help='Help action')
+    help_args = parser.parse_args(args)
+
+    if help_args.action in ACTIONS.keys():
+        ACTIONS[help_args.action](['--help'])
+    else:
+        ACTIONS['unknown'](f'no action named: {help_args.action}')
+
 
 ACTIONS = {
     'pull': pull,
@@ -135,7 +145,9 @@ ACTIONS = {
     'merge': merge,
     'ls': ls,
     'graph': graph,
-    'version': lambda _: print(f'git-chainsaw version {__VERSION__}')
+    'help': cs_help,
+    'version': lambda _: print(f'git-chainsaw version {__VERSION__}'),
+    'unknown': lambda args: print(f'invalid command {args}')
 }
 
 
@@ -144,9 +156,10 @@ def main():
     parser.add_argument('action', nargs='?', help='Subtree Action: {}'.format(' '.join(ACTIONS.keys())))
     known, action_args = parser.parse_known_args()
 
-    action = ACTIONS.get(known.action, ACTIONS['version'])
-
-    action(action_args)
+    if known.action in ACTIONS.keys():
+        ACTIONS[known.action](action_args)
+    else:
+        ACTIONS['unknown'](f'no action named: {known.action}')
 
 
 if __name__ == '__main__':
