@@ -8,7 +8,7 @@ import argparse
 import subprocess
 
 
-__VERSION__ = '0.0.5'
+__VERSION__ = '0.0.6'
 
 
 def cmd(string, cwd=os.getcwd(), verbose=True):
@@ -148,6 +148,7 @@ def reset(args):
 
 
 def merge(args):
+    print('Merge not implemented')
     pass
 
 
