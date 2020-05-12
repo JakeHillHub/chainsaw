@@ -31,8 +31,11 @@ def filter_none(args):
     return list(filter(lambda x: x != None, args))
 
 
-def filter_subtrees(prefixes, subtrees):
+def filter_subtrees(prefixes, subtrees, invert=False):
     """Takes the json list of subtrees and returns only the ones specified (by prefix)"""
+
+    if invert:
+        return list(filter(lambda subt: subt['prefix'] not in prefixes, subtrees))
 
     return list(filter(lambda subt: subt['prefix'] in prefixes, subtrees))
 
@@ -163,10 +166,12 @@ def remove(args):
     args = parser.parse_args(args)
 
     subtrees = load_json()
-    subtrees = filter_subtrees(all_prefixes(subtrees) if args.all else args.prefixes, subtrees)
+    fsubtrees = filter_subtrees(all_prefixes(subtrees) if args.all else args.prefixes, subtrees)
 
     for subt in subtrees:
         cmd('git rm -rf {}'.format(subt['prefix']))
+
+    add_subtree_to_json(filter_subtrees(all_prefixes(fsubtrees), subtrees, invert=True))
 
 
 def ls(args):
