@@ -11,10 +11,13 @@ import subprocess
 __VERSION__ = '0.0.6'
 
 
-def cmd(string, cwd=os.getcwd(), verbose=True):
+def cmd(string, cwd=os.getcwd(), verbose=True, shell=False):
     """Wraps Popen"""
 
-    process = subprocess.Popen(string.split(' '), cwd=cwd, stdout=subprocess.PIPE)
+    if not shell:  # Split command up by spaces
+        string = string.split(' ')
+
+    process = subprocess.Popen(string, cwd=cwd, stdout=subprocess.PIPE, shell=shell)
     to_string = process.communicate()[0].decode('utf-8')
     if verbose:
         print(to_string)
@@ -162,7 +165,7 @@ def remove(args):
     subtrees = filter_subtrees(all_prefixes(subtrees) if args.all else args.prefixes, subtrees)
 
     for subt in subtrees:
-        cmd('git filter-branch --index-filter "git rm --cached --ignore-unmatch -rf {}" --prune-empty -f HEAD'.format(subt['prefix']))
+        cmd('git filter-branch --index-filter "git rm --cached --ignore-unmatch -rf {}" --prune-empty -f HEAD'.format(subt['prefix']), shell=True)
 
 
 def ls(args):
