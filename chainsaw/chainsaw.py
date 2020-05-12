@@ -167,9 +167,7 @@ def remove(args):
 
     for subt in subtrees:
         cmd('git filter-branch --index-filter "git rm --cached --ignore-unmatch -rf {}" --prune-empty -f HEAD'.format(subt['prefix']), shell=True)
-        path = os.path.join('.git', 'refs', 'original', '*')
-        for file in glob.glob(path):
-            os.remove(file)
+        os.removedirs(os.path.join('.git', 'refs', 'original'))
 
 
 def ls(args):
