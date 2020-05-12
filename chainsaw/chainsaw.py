@@ -4,7 +4,7 @@ import os
 import re
 import sys
 import json
-import glob
+import shutil
 import argparse
 import subprocess
 
@@ -167,7 +167,7 @@ def remove(args):
 
     for subt in subtrees:
         cmd('git filter-branch --index-filter "git rm --cached --ignore-unmatch -rf {}" --prune-empty -f HEAD'.format(subt['prefix']), shell=True)
-        os.removedirs(os.path.join('.git', 'refs', 'original'))
+        shutil.rmtree(os.path.join('.git', 'refs', 'original'))
 
 
 def ls(args):
