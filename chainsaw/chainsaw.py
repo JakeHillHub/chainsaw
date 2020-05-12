@@ -155,7 +155,7 @@ def merge(args):
 def remove(args):
     parser = argparse.ArgumentParser()
     parser.add_argument('--all', action='store_true', help='Remove all subtrees')
-    parser.add_argument('prefixes', action='store_true', help='Specify prefixes')
+    parser.add_argument('prefixes', nargs='*', default=[], help='Subtree prefixes/paths')
     args = parser.parse_args(args)
 
     subtrees = load_json()
