@@ -168,6 +168,9 @@ def remove(args):
     for subt in subtrees:
         cmd('git filter-branch --index-filter "git rm --cached --ignore-unmatch -rf {}" --prune-empty -f HEAD'.format(subt['prefix']), shell=True)
         shutil.rmtree(os.path.join('.git', 'refs', 'original'))
+        cmd('git reflog expire --all --expire-unreachable=0')
+        cmd('git repack -A -d')
+        cmd('git prune')
 
 
 def ls(args):
