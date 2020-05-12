@@ -9,7 +9,7 @@ import argparse
 import subprocess
 
 
-__VERSION__ = '0.0.7'
+__VERSION__ = '0.0.8'
 
 
 def cmd(string, cwd=os.getcwd(), verbose=True, shell=False):
@@ -21,7 +21,10 @@ def cmd(string, cwd=os.getcwd(), verbose=True, shell=False):
     process = subprocess.Popen(string, cwd=cwd, stdout=subprocess.PIPE, shell=shell)
     to_string = process.communicate()[0].decode('utf-8')
     if verbose:
-        print(to_string)
+        try:
+            print(to_string)
+        except BrokenPipeError:
+            pass
     return to_string
 
 
