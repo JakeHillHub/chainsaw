@@ -9,7 +9,7 @@ import argparse
 import subprocess
 
 
-__VERSION__ = '0.0.6'
+__VERSION__ = '0.0.7'
 
 
 def cmd(string, cwd=os.getcwd(), verbose=True, shell=False):
@@ -166,11 +166,7 @@ def remove(args):
     subtrees = filter_subtrees(all_prefixes(subtrees) if args.all else args.prefixes, subtrees)
 
     for subt in subtrees:
-        cmd('git filter-branch --index-filter "git rm --cached --ignore-unmatch -rf {}" --prune-empty -f HEAD'.format(subt['prefix']), shell=True)
-        shutil.rmtree(os.path.join('.git', 'refs', 'original'))
-        cmd('git reflog expire --all --expire-unreachable=0')
-        cmd('git repack -A -d')
-        cmd('git prune')
+        cmd('git rm -rf {}'.format(subt['prefix']))
 
 
 def ls(args):
