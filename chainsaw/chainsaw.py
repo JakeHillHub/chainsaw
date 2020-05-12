@@ -152,6 +152,19 @@ def merge(args):
     pass
 
 
+def remove(args):
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--all', action='store_true', help='Remove all subtrees')
+    parser.add_argument('prefixes', action='store_true', help='Specify prefixes')
+    args = parser.parse_args(args)
+
+    subtrees = load_json()
+    subtrees = filter_subtrees(all_prefixes(subtrees) if args.all else args.prefixes, subtrees)
+
+    for subt in subtrees:
+        cmd("git filter-branch --index-filter 'git rm --cached --ignore-unmatch -rf {}' --prune-empty -f HEAD".format(subt['prefix']))
+
+
 def ls(args):
     """List existing submodules using git log"""
 
@@ -185,6 +198,8 @@ ACTIONS = {
     'push': push,
     'reset': reset,
     'merge': merge,
+    'remove': remove,
+    'rm': remove,
     'ls': ls,
     'graph': graph,
     'help': cs_help,
