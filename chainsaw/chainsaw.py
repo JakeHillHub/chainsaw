@@ -162,7 +162,7 @@ def remove(args):
     subtrees = filter_subtrees(all_prefixes(subtrees) if args.all else args.prefixes, subtrees)
 
     for subt in subtrees:
-        cmd("git filter-branch --index-filter 'git rm --cached --ignore-unmatch -rf {}' --prune-empty -f HEAD".format(subt['prefix']))
+        cmd('git filter-branch --index-filter "git rm --cached --ignore-unmatch -rf {}" --prune-empty -f HEAD'.format(subt['prefix']))
 
 
 def ls(args):
