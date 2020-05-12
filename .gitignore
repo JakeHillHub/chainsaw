@@ -3,3 +3,4 @@ build
 git_chainsaw.egg-info
 dist
 *.pyc
+.vscode
