@@ -9,7 +9,7 @@ import argparse
 import subprocess
 
 
-__VERSION__ = '0.0.8'
+__VERSION__ = '0.1.0'
 
 
 def cmd(string, cwd=os.getcwd(), verbose=True, shell=False):
@@ -72,6 +72,13 @@ def add_subtree_to_json(subtree):
     chainsaw_json.append(subtree)
     with open('chainsaw.json', 'w') as file:
         file.write(json.dumps(chainsaw_json, sort_keys=True, indent=4, separators=(',', ': ')))
+
+
+def overwrite_subtree_json(subtrees):
+    """Completely overwrite existing chainsaw.json file"""
+
+    with open('chainsaw.json', 'w') as file:
+        file.write(json.dumps(subtrees, sort_keys=True, indent=4, separators=(',', ': ')))
 
 
 def add(args):
@@ -171,10 +178,10 @@ def remove(args):
     subtrees = load_json()
     fsubtrees = filter_subtrees(all_prefixes(subtrees) if args.all else args.prefixes, subtrees)
 
-    for subt in subtrees:
+    for subt in fsubtrees:
         cmd('git rm -rf {}'.format(subt['prefix']))
 
-    add_subtree_to_json(filter_subtrees(all_prefixes(fsubtrees), subtrees, invert=True))
+    overwrite_subtree_json(filter_subtrees(all_prefixes(fsubtrees), subtrees, invert=True))
 
 
 def ls(args):
