@@ -103,6 +103,8 @@ def add(args):
         if args.squash:
             command += ' --squash'
         cmd(command)
+        from time import sleep
+        sleep(2)
         add_subtree_to_json({
             'prefix': args.prefix,
             'remote': args.remote,
