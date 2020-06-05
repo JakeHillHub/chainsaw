@@ -10,7 +10,7 @@ import argparse
 import subprocess
 
 
-__VERSION__ = '0.1.1'
+__VERSION__ = '0.1.11'
 
 
 def cmd(command, cwd=os.getcwd(), verbose=True):
@@ -20,7 +20,7 @@ def cmd(command, cwd=os.getcwd(), verbose=True):
         stdoutdata = subprocess.check_output(shlex.split(command), cwd=cwd)
         if verbose:
             print(stdoutdata.decode('utf-8'))
-        return stdoutdata
+        return stdoutdata.decode('utf-8')
     except subprocess.CalledProcessError:
         return None
 
@@ -190,9 +190,30 @@ def remove(args):
 def ls(args):
     """List existing submodules using git log"""
 
-    for line in cmd('git log', verbose=False).split('\n'):
-        if re.search('git-subtree-dir', line):
-            print(line.split(' ')[-1])
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-v', '--verbose', action='store_true', help='Print all subtree information')
+    args = parser.parse_args(args)
+
+    subtrees = load_json()
+
+    if args.verbose:  # This is ugly TODO: make not horrible
+        prefix_max = len(max([s['prefix'] for s in subtrees], key=len))
+        branch_max = len(max([s['branch'] for s in subtrees], key=len))
+        remote_max = len(max([s['remote'] for s in subtrees], key=len))
+        pheader = 'prefix'
+        bheader = 'branch'
+        rheader = 'remote'
+        header = f'\n{pheader:<{prefix_max}}   |   {bheader:<{branch_max}}   |   {rheader:<{remote_max}}'
+        dashes = list(filter(lambda x: x, [i - 1 if c == '|' else None for i, c in enumerate(header)]))
+
+        print(header)
+        print(''.join(['-' if i not in dashes else '|' for i in range(len(header))]))
+
+        for subt in subtrees:
+            print(f'{subt["prefix"]:<{prefix_max}}   |   {subt["branch"]:<{branch_max}}   |   {subt["remote"]}')
+    else:
+        for subt in subtrees:
+            print(subt['prefix'])
 
 
 def graph(args):
