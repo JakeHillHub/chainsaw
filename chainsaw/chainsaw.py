@@ -4,6 +4,7 @@ import os
 import re
 import sys
 import json
+import shlex
 import shutil
 import argparse
 import subprocess
@@ -12,20 +13,16 @@ import subprocess
 __VERSION__ = '0.1.0'
 
 
-def cmd(string, cwd=os.getcwd(), verbose=True, shell=False):
-    """Wraps Popen"""
+def cmd(command, cwd=os.getcwd(), verbose=True):
+    """Wraps check_output"""
 
-    if not shell:  # Split command up by spaces
-        string = string.split(' ')
-
-    process = subprocess.Popen(string, cwd=cwd, stdout=subprocess.PIPE, shell=shell)
-    to_string = process.communicate()[0].decode('utf-8')
-    if verbose:
-        try:
-            print(to_string)
-        except BrokenPipeError:
-            pass
-    return to_string
+    try:
+        stdoutdata = subprocess.check_output(shlex.split(command), cwd=cwd)
+        if verbose:
+            print(stdoutdata.decode('utf-8'))
+        return stdoutdata
+    except subprocess.CalledProcessError:
+        return None
 
 
 def filter_none(args):
@@ -102,14 +99,12 @@ def add(args):
         command = 'git subtree add -P {} {} {}'.format(args.prefix, args.remote, args.branch)
         if args.squash:
             command += ' --squash'
-        cmd(command)
-        from time import sleep
-        sleep(2)
-        add_subtree_to_json({
-            'prefix': args.prefix,
-            'remote': args.remote,
-            'branch': args.branch
-        })
+        if cmd(command):
+            add_subtree_to_json({
+                'prefix': args.prefix,
+                'remote': args.remote,
+                'branch': args.branch
+            })
     else:
         print(parser.parse_args(['--help']))
 
@@ -130,7 +125,9 @@ def pull(args):
         command = 'git subtree pull -P {} {} {}'.format(subt['prefix'], subt['remote'], subt['branch'])
         if args.squash:
             command += ' --squash'
-        cmd(command)
+        if not cmd(command):
+            print('Subtree error, stopping.')
+            break
 
 
 def push(args):
@@ -145,7 +142,9 @@ def push(args):
     subtrees = filter_subtrees(all_prefixes(subtrees) if args.all else args.prefixes, subtrees)
 
     for subt in subtrees:
-        cmd('git subtree push -P {} {} {}'.format(subt['prefix'], subt['remote'], subt['branch']))
+        if not cmd('git subtree push -P {} {} {}'.format(subt['prefix'], subt['remote'], subt['branch'])):
+            print('Subtree error, stopping.')
+            break
 
 
 def reset(args):
@@ -181,7 +180,9 @@ def remove(args):
     fsubtrees = filter_subtrees(all_prefixes(subtrees) if args.all else args.prefixes, subtrees)
 
     for subt in fsubtrees:
-        cmd('git rm -rf {}'.format(subt['prefix']))
+        if not cmd('git rm -rf {}'.format(subt['prefix'])):
+            print('Subtree error, stopping.')
+            return
 
     overwrite_subtree_json(filter_subtrees(all_prefixes(fsubtrees), subtrees, invert=True))
 
