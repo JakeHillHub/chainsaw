@@ -10,7 +10,7 @@ import argparse
 import subprocess
 
 
-__VERSION__ = '0.1.0'
+__VERSION__ = '0.1.1'
 
 
 def cmd(command, cwd=os.getcwd(), verbose=True):
